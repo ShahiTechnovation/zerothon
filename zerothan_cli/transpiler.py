@@ -81,6 +81,12 @@ class EVMOpcode(Enum):
     CALLER = 0x33
     
     # Gas
+    CALLER = 0x33
+    
+    # Hashing
+    SHA3 = 0x20
+    
+    # Gas
     GAS = 0x5a
 
 
@@ -92,15 +98,17 @@ class ContractState:
     events: Dict[str, List[str]]  # Event name -> parameter types
     initial_values: Dict[str, Any]  # Variable initial values
     variable_types: Dict[str, str]  # Variable name -> type (uint256, bytes32)
+    mappings: Dict[str, Dict] = None  # Mapping/Array metadata
     next_slot: int = 0
 
 
 @dataclass
 class GasCost:
     """Gas costs for different operations."""
-    SLOAD = 200
+    SLOAD = 100 # Adjusted
     SSTORE_SET = 20000
-    SSTORE_RESET = 5000
+    SSTORE_RESET = 2900
+    SHA3 = 30
     ARITHMETIC = 3
     MEMORY = 3
     CALL = 700
@@ -157,7 +165,8 @@ class PythonASTAnalyzer(ast.NodeVisitor):
             functions=self.functions,
             events=self.events,
             initial_values=self.initial_values,
-            variable_types=self.variable_types
+            variable_types=self.variable_types,
+            mappings=self.mappings
         )
     
     def visit_ClassDef(self, node: ast.ClassDef):
@@ -245,6 +254,17 @@ class PythonASTAnalyzer(ast.NodeVisitor):
                         mapping_name = stmt.value.value.attr
                         if mapping_name in self.mappings:
                             return_type = self.mappings[mapping_name]['value_type']
+            
+            # Check for generic type annotation on return
+            if node.returns:
+                if isinstance(node.returns, ast.Name):
+                    if node.returns.id == 'list':
+                        return_type = 'bytes32[]' # Default for list return
+                    elif node.returns.id == 'bool':
+                        return_type = 'bool'
+                    elif node.returns.id == 'str':
+                         return_type = 'string'
+
         
         self.functions[node.name] = {
             'is_public': is_public,
@@ -324,6 +344,15 @@ class PythonASTAnalyzer(ast.NodeVisitor):
                         str_bytes = node.value.s.encode('utf-8')[:32]
                         self.initial_values[var_name] = int.from_bytes(str_bytes.ljust(32, b'\x00'), 'big')
                         self.variable_types[var_name] = 'bytes32'
+                elif isinstance(node.value, ast.List):
+                    # List assignment (Dynamic Array)
+                    self.initial_values[var_name] = len(node.value.elts)
+                    self.variable_types[var_name] = 'bytes32[]' # Default to bytes32/string array
+                    self.mappings[var_name] = {
+                        'type': 'array',
+                        'value_type': 'bytes32',
+                        'base_slot': self.state_vars[var_name]
+                    }
                 else:
                     # Default fallback
                     self.initial_values[var_name] = 0
@@ -556,13 +585,109 @@ class EVMBytecodeGenerator:
         elif isinstance(node, ast.Return):
             # Return statement
             if node.value is not None:
-                # Return a value
-                self.compile_expr(node.value, arg_map)
-                self.emit_push(0)  # Memory offset
-                self.emit_opcode(EVMOpcode.MSTORE)
-                self.emit_push(32)  # Return 32 bytes
-                self.emit_push(0)   # Memory offset
-                self.emit_opcode(EVMOpcode.RETURN)
+                # Check for array return
+                is_array_return = False
+                if (isinstance(node.value, ast.Attribute) and 
+                    isinstance(node.value.value, ast.Name) and 
+                    node.value.value.id == 'self' and
+                    self.current_state and 
+                    node.value.attr in self.current_state.mappings and 
+                    self.current_state.mappings[node.value.attr].get('type') == 'array'):
+                    
+                    # ARRAY RETURN LOGIC
+                    list_name = node.value.attr
+                    slot = self.current_state.variables[list_name]
+                    
+                    # 1. Load length
+                    self.emit_push(slot)
+                    self.emit_opcode(EVMOpcode.SLOAD) # Stack: [Length]
+                    
+                    # 2. Store offset 0x20 at Mem[0x00] (Standard dynamic array encoding head)
+                    self.emit_push(0x20)
+                    self.emit_push(0x00)
+                    self.emit_opcode(EVMOpcode.MSTORE)
+                    
+                    # 3. Store length at Mem[0x20]
+                    self.emit_opcode(EVMOpcode.DUP1) # Stack: [Length, Length]
+                    self.emit_push(0x20)
+                    self.emit_opcode(EVMOpcode.MSTORE) # Stack: [Length]
+                    
+                    # 4. Loop to copy elements to memory
+                    # Stack: [Length]
+                    # We use memory starting at 0x40.
+                    
+                    # Push i=0
+                    self.emit_push(0) # Stack: [i, Length]
+                    
+                    # LOOP START
+                    loop_start = self.get_current_offset()
+                    self.emit_opcode(EVMOpcode.JUMPDEST)
+                    
+                    # Check i < Length
+                    self.emit_opcode(EVMOpcode.DUP2) # Stack: [Length, i, Length]
+                    self.emit_opcode(EVMOpcode.DUP2) # Stack: [i, Length, i, Length]
+                    self.emit_opcode(EVMOpcode.LT)   # Stack: [i<Length, i, Length]
+                    self.emit_opcode(EVMOpcode.ISZERO) 
+                    
+                    # EXIT JUMP
+                    exit_placeholder = self.get_current_offset() + 1
+                    self.emit_push(0xEEEE, 2)
+                    self.emit_opcode(EVMOpcode.JUMPI)
+                    
+                    # LOOP BODY
+                    # Calculate Storage Slot: keccak(base_slot) + i
+                    self.emit_push(slot)
+                    self.emit_push(0x00)
+                    self.emit_opcode(EVMOpcode.MSTORE)
+                    self.emit_push(0x20)
+                    self.emit_push(0x00)
+                    self.emit_opcode(EVMOpcode.SHA3) # Stack: [BaseHash, i, Length]
+                    
+                    self.emit_opcode(EVMOpcode.DUP2) # Stack: [i, BaseHash, i, Length]
+                    self.emit_opcode(EVMOpcode.ADD)  # Stack: [ItemSlot, i, Length]
+                    self.emit_opcode(EVMOpcode.SLOAD) # Stack: [Value, i, Length]
+                    
+                    # Calculate Memory Address: 0x40 + i*32
+                    self.emit_opcode(EVMOpcode.DUP2) # Stack: [i, Value, i, Length]
+                    self.emit_push(32)
+                    self.emit_opcode(EVMOpcode.MUL)
+                    self.emit_push(0x40)
+                    self.emit_opcode(EVMOpcode.ADD) # Stack: [MemAddr, Value, i, Length]
+                    
+                    self.emit_opcode(EVMOpcode.MSTORE) # Stack: [i, Length]
+                    
+                    # Increment i
+                    self.emit_push(1)
+                    self.emit_opcode(EVMOpcode.ADD) # Stack: [i+1, Length]
+                    
+                    # JUMP to Start
+                    self.emit_push(loop_start, 2)
+                    self.emit_opcode(EVMOpcode.JUMP)
+                    
+                    # LOOP EXIT
+                    exit_dest = self.get_current_offset()
+                    self.emit_opcode(EVMOpcode.JUMPDEST)
+                    self._backpatch_jump_target(exit_placeholder, exit_dest, 2)
+                    
+                    # RETURN
+                    # Size = 0x40 + Length*32
+                    self.emit_opcode(EVMOpcode.POP) # Pop i -> Stack: [Length]
+                    self.emit_push(32)
+                    self.emit_opcode(EVMOpcode.MUL)
+                    self.emit_push(0x40)
+                    self.emit_opcode(EVMOpcode.ADD) # Stack: [TotalSize]
+                    
+                    self.emit_push(0) # Offset
+                    self.emit_opcode(EVMOpcode.RETURN)
+
+                if not is_array_return:
+                    # Return a normal value
+                    self.compile_expr(node.value, arg_map)
+                    self.emit_push(0)  # Memory offset
+                    self.emit_opcode(EVMOpcode.MSTORE)
+                    self.emit_push(32)  # Return 32 bytes
+                    self.emit_push(0)   # Memory offset
+                    self.emit_opcode(EVMOpcode.RETURN)
             else:
                 # Return empty
                 self.emit_push(0)
@@ -605,6 +730,50 @@ class EVMBytecodeGenerator:
             # Backpatch jump targets
             self._backpatch_jump_target(else_placeholder + 1, else_target, 2)
             self._backpatch_jump_target(end_placeholder + 1, end_target, 2)
+        elif isinstance(node, ast.Expr):
+            # Expression statement (e.g. self.list.append(x))
+            if isinstance(node.value, ast.Call):
+                if (isinstance(node.value.func, ast.Attribute) and 
+                    node.value.func.attr == 'append'):
+                    # List append operation
+                    # Detect list variable
+                    if (isinstance(node.value.func.value, ast.Attribute) and
+                        isinstance(node.value.func.value.value, ast.Name) and
+                        node.value.func.value.value.id == 'self'):
+                        
+                        list_name = node.value.func.value.attr
+                        if self.current_state and list_name in self.current_state.variables:
+                            base_slot = self.current_state.variables[list_name]
+                            
+                            # 1. Load current length
+                            self.emit_push(base_slot)
+                            self.emit_opcode(EVMOpcode.SLOAD) # Stack: [Length]
+                            
+                            # 2. Calculate storage slot for new item: keccak256(base_slot) + length
+                            # We need to hash the base_slot to find array data location
+                            self.emit_push(base_slot)
+                            self.emit_push(0x00) # Memory offset 0
+                            self.emit_opcode(EVMOpcode.MSTORE)
+                            
+                            self.emit_push(0x20) # 32 bytes
+                            self.emit_push(0x00) # Offset 0
+                            self.emit_opcode(EVMOpcode.SHA3) # Stack: [DataStartHash, Length]
+                            
+                            self.emit_opcode(EVMOpcode.DUP2) # Stack: [Length, DataStartHash, Length]
+                            self.emit_opcode(EVMOpcode.ADD)  # Stack: [ItemSlot, Length]
+                            
+                            # 3. Compile value to store
+                            if node.value.args:
+                                self.compile_expr(node.value.args[0], arg_map) # Stack: [Value, ItemSlot, Length]
+                                self.emit_opcode(EVMOpcode.SWAP1) # Stack: [ItemSlot, Value, Length]
+                                self.emit_opcode(EVMOpcode.SSTORE) # Stack: [Length]
+                                
+                                # 4. Increment and update length
+                                self.emit_push(1)
+                                self.emit_opcode(EVMOpcode.ADD) # Stack: [NewLength]
+                                self.emit_push(base_slot)
+                                self.emit_opcode(EVMOpcode.SSTORE)
+
         # Add more statement types as needed
     
     def _backpatch_jump_target(self, offset: int, target: int, size: int):
