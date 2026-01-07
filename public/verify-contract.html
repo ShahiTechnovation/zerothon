@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Contract Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            display: none;
+        }
+        .result.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+            display: block;
+        }
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+            display: block;
+        }
+        .result.info {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            color: #0c5460;
+            display: block;
+        }
+        .hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .prefill {
+            font-size: 12px;
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .prefill:hover {
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Manual Contract Verification</h1>
+        <p class="subtitle">Verify your deployed contract to enable Read/Write functions in PyVax Explorer</p>
+
+        <form id="verifyForm">
+            <div class="form-group">
+                <label>Contract Address</label>
+                <input type="text" id="address" value="0x89F628A96419e4651968EB8332ec0b662B5372e8" required>
+                <div class="hint">Your deployed contract address</div>
+            </div>
+
+            <div class="form-group">
+                <label>Network</label>
+                <input type="text" id="network" value="fuji" required>
+                <div class="hint">fuji for testnet, mainnet for production</div>
+            </div>
+
+            <div class="form-group">
+                <label>Contract Name</label>
+                <input type="text" id="contractName" value="SimpleVoting" required>
+                <div class="hint">The class name from your Python code</div>
+            </div>
+
+            <div class="form-group">
+                <label>Python Source Code</label>
+                <a href="#" class="prefill" onclick="loadVotingContract(); return false;">📝 Load Voting Contract Template</a>
+                <textarea id="pythonSource" required placeholder="Paste your full Python contract code here..."></textarea>
+                <div class="hint">Your complete Python smart contract code</div>
+            </div>
+
+            <div class="form-group">
+                <label>Contract ABI (JSON Array)</label>
+                <a href="#" class="prefill" onclick="loadSampleABI(); return false;">📋 Load Sample ABI Format</a>
+                <textarea id="abi" required placeholder='[{"type":"function","name":"vote",...}]'></textarea>
+                <div class="hint">Paste the ABI array from your compilation (found in IDE console)</div>
+            </div>
+
+            <button type="submit" class="btn">🚀 Verify Contract</button>
+        </form>
+
+        <div class="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #666;">Verifying contract...</p>
+        </div>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('verifyForm');
+        const resultDiv = document.getElementById('result');
+        const loadingDiv = document.querySelector('.loading');
+
+        function loadVotingContract() {
+            document.getElementById('pythonSource').value = `# Simple Voting Contract
+@contract
+class SimpleVoting:
+    admin: address
+    voting_open: bool
+    total_votes: uint256
+    vote_count: mapping(uint256, uint256)
+    has_voted: mapping(address, bool)
+    voted_for: mapping(address, uint256)
+    candidate_names: mapping(uint256, str)
+    candidate_count: uint256
+
+    def __init__(self):
+        self.admin = msg.sender
+        self.voting_open = True
+        self.total_votes = 0
+        self.candidate_count = 0
+
+    @public
+    def add_candidate(self, name: str):
+        require(msg.sender == self.admin, "Only admin can add candidates")
+        require(len(name) > 0, "Candidate name cannot be empty")
+        self.candidate_count += 1
+        candidate_id = self.candidate_count
+        self.candidate_names[candidate_id] = name
+        self.vote_count[candidate_id] = 0
+
+    @public
+    def vote(self, candidate_id: uint256):
+        require(self.voting_open, "Voting is closed")
+        require(not self.has_voted[msg.sender], "You already voted")
+        require(candidate_id > 0 and candidate_id <= self.candidate_count, "Invalid candidate ID")
+        self.has_voted[msg.sender] = True
+        self.voted_for[msg.sender] = candidate_id
+        self.vote_count[candidate_id] += 1
+        self.total_votes += 1
+
+    @view
+    def get_vote_count(self, candidate_id: uint256) -> uint256:
+        return self.vote_count[candidate_id]`;
+        }
+
+        function loadSampleABI() {
+            document.getElementById('abi').value = JSON.stringify([
+                {
+                    "type": "constructor",
+                    "inputs": [],
+                    "stateMutability": "nonpayable"
+                },
+                {
+                    "type": "function",
+                    "name": "add_candidate",
+                    "inputs": [{"name": "name", "type": "string"}],
+                    "outputs": [],
+                    "stateMutability": "nonpayable"
+                },
+                {
+                    "type": "function",
+                    "name": "vote",
+                    "inputs": [{"name": "candidate_id", "type": "uint256"}],
+                    "outputs": [],
+                    "stateMutability": "nonpayable"
+                },
+                {
+                    "type": "function",
+                    "name": "get_vote_count",
+                    "inputs": [{"name": "candidate_id", "type": "uint256"}],
+                    "outputs": [{"name": "", "type": "uint256"}],
+                    "stateMutability": "view"
+                }
+            ], null, 2);
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Get form values
+            const address = document.getElementById('address').value.trim();
+            const network = document.getElementById('network').value.trim();
+            const contractName = document.getElementById('contractName').value.trim();
+            const pythonSource = document.getElementById('pythonSource').value.trim();
+            const abiText = document.getElementById('abi').value.trim();
+
+            // Parse ABI
+            let abi;
+            try {
+                abi = JSON.parse(abiText);
+                if (!Array.isArray(abi)) {
+                    throw new Error('ABI must be an array');
+                }
+            } catch (err) {
+                showResult('error', '❌ Invalid ABI JSON: ' + err.message);
+                return;
+            }
+
+            // Show loading
+            loadingDiv.style.display = 'block';
+            resultDiv.style.display = 'none';
+            form.querySelector('.btn').disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:3001/api/verify-manual', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        address,
+                        network,
+                        contractName,
+                        pythonSource,
+                        abi
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.verified) {
+                    showResult('success', 
+                        '✅ Contract Verified Successfully!<br><br>' +
+                        '📝 Python source saved<br>' +
+                        '🎯 Read/Write functions enabled<br><br>' +
+                        `🔗 <a href="http://localhost:3001/explorer/${address}?network=${network}" target="_blank" style="color: #155724; font-weight: bold;">View in PyVax Explorer</a><br><br>` +
+                        '<small>Reload the explorer page to see Read/Write tabs!</small>'
+                    );
+                } else {
+                    showResult('error', 
+                        '❌ Verification Failed<br><br>' +
+                        'Message: ' + result.message + '<br>' +
+                        (result.errors ? 'Errors: ' + result.errors.join(', ') : '')
+                    );
+                }
+            } catch (err) {
+                showResult('error', '❌ Network Error: ' + err.message);
+            } finally {
+                loadingDiv.style.display = 'none';
+                form.querySelector('.btn').disabled = false;
+            }
+        });
+
+        function showResult(type, message) {
+            resultDiv.className = 'result ' + type;
+            resultDiv.innerHTML = message;
+            resultDiv.style.display = 'block';
+        }
+
+        // Show info on load
+        showResult('info', 
+            '💡 <strong>Need your ABI?</strong><br><br>' +
+            '1. Go to PyVax IDE and compile your contract<br>' +
+            '2. Open browser DevTools (F12) → Console<br>' +
+            '3. Look for compilation result with "abi" array<br>' +
+            '4. Copy the entire ABI array and paste above<br><br>' +
+            'Or click "Load Sample ABI Format" to see the expected format.'
+        );
+    </script>
+</body>
+</html>

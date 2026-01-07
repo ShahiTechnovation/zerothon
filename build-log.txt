@@ -1,0 +1,634 @@
+﻿
+> zerothon-website@0.1.0 build
+> next build
+
+  Γû▓ Next.js 14.2.25
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+node.exe :  ΓÜá Compiled 
+with warnings
+At C:\Program 
+Files\nodejs\npm.ps1:29 
+char:3
++   & $NODE_EXE $NPM_CLI_JS 
+$args
++   ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo          
+    : NotSpecified: ( ΓÜá   
+  Compiled with warnings:   
+ String) [], RemoteExcep    
+tion
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+
+./app/api/compile/route.ts
+Critical dependency: 
+require function is used in 
+a way in which dependencies 
+cannot be statically 
+extracted
+
+Import trace for requested 
+module:
+./app/api/compile/route.ts
+
+   Skipping validation of types
+   Linting ...
+   Collecting page data ...
+ ΓÜá Using edge runtime on 
+a page currently disables 
+static generation for that 
+page
+   Generating static pages (0/23) ...
+[Blockscout API] Error: B 
+[Error]: Dynamic server 
+usage: Route 
+/api/blockscout couldn't be 
+rendered statically because 
+it used 
+`nextUrl.searchParams`. See 
+more info here: https://next
+js.org/docs/messages/dynamic
+-server-error
+    at V (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-route.
+runtime.prod.js:6:21778)
+    at Object.get (C:\Pyvers
+e\zerothon\node_modules\next
+\dist\compiled\next-server\a
+pp-route.runtime.prod.js:6:2
+9137)
+    at g (C:\Pyverse\zerotho
+n\.next\server\app\api\block
+scout\route.js:1:2665)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-route.run
+time.prod.js:6:38417
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\server
+\lib\trace\tracer.js:140:36
+    at 
+NoopContextManager.with (C:\
+Pyverse\zerothon\node_module
+s\@opentelemetry\api\build\s
+rc\context\NoopContextManage
+r.js:25:19)
+    at ContextAPI.with (C:\P
+yverse\zerothon\node_modules
+\@opentelemetry\api\build\sr
+c\api\context.js:60:46)
+    at 
+NoopTracer.startActiveSpan (
+C:\Pyverse\zerothon\node_mod
+ules\@opentelemetry\api\buil
+d\src\trace\NoopTracer.js:65
+:31)
+    at 
+ProxyTracer.startActiveSpan 
+(C:\Pyverse\zerothon\node_mo
+dules\@opentelemetry\api\bui
+ld\src\trace\ProxyTracer.js:
+36:24)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\server
+\lib\trace\tracer.js:122:103
+ {
+  description: "Route 
+/api/blockscout couldn't be 
+rendered statically because 
+it used 
+`nextUrl.searchParams`. See 
+more info here: https://next
+js.org/docs/messages/dynamic
+-server-error",
+  digest: 
+'DYNAMIC_SERVER_USAGE'
+}
+Search error: B [Error]: 
+Dynamic server usage: Route 
+/api/verify/search couldn't 
+be rendered statically 
+because it used 
+`nextUrl.searchParams`. See 
+more info here: https://next
+js.org/docs/messages/dynamic
+-server-error
+    at V (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-route.
+runtime.prod.js:6:21778)
+    at Object.get (C:\Pyvers
+e\zerothon\node_modules\next
+\dist\compiled\next-server\a
+pp-route.runtime.prod.js:6:2
+9137)
+    at O (C:\Pyverse\zerotho
+n\.next\server\app\api\verif
+y\search\route.js:1:2752)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-route.run
+time.prod.js:6:38417
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\server
+\lib\trace\tracer.js:140:36
+    at 
+NoopContextManager.with (C:\
+Pyverse\zerothon\node_module
+s\@opentelemetry\api\build\s
+rc\context\NoopContextManage
+r.js:25:19)
+    at ContextAPI.with (C:\P
+yverse\zerothon\node_modules
+\@opentelemetry\api\build\sr
+c\api\context.js:60:46)
+    at 
+NoopTracer.startActiveSpan (
+C:\Pyverse\zerothon\node_mod
+ules\@opentelemetry\api\buil
+d\src\trace\NoopTracer.js:65
+:31)
+    at 
+ProxyTracer.startActiveSpan 
+(C:\Pyverse\zerothon\node_mo
+dules\@opentelemetry\api\bui
+ld\src\trace\ProxyTracer.js:
+36:24)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\server
+\lib\trace\tracer.js:122:103
+ {
+  description: "Route 
+/api/verify/search couldn't 
+be rendered statically 
+because it used 
+`nextUrl.searchParams`. See 
+more info here: https://next
+js.org/docs/messages/dynamic
+-server-error",
+  digest: 
+'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (5/23) 
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at I (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94364)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:96670
+    at F._fromJSON (C:\Pyver
+se\zerothon\node_modules\nex
+t\dist\compiled\next-server\
+app-page.runtime.prod.js:12:
+97108)
+    at JSON.parse 
+(<anonymous>)
+    at O (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94085)
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:100584) {
+  digest: '100596910'
+}
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at I (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94364)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:96670
+    at F._fromJSON (C:\Pyver
+se\zerothon\node_modules\nex
+t\dist\compiled\next-server\
+app-page.runtime.prod.js:12:
+97108)
+    at JSON.parse 
+(<anonymous>)
+    at O (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94085)
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:100584)
+
+Error occurred prerendering 
+page "/docs". Read more: htt
+ps://nextjs.org/docs/message
+s/prerender-error
+
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at I (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94364)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:96670
+    at F._fromJSON (C:\Pyver
+se\zerothon\node_modules\nex
+t\dist\compiled\next-server\
+app-page.runtime.prod.js:12:
+97108)
+    at JSON.parse 
+(<anonymous>)
+    at O (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94085)
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:100584)
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at i (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:88296)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:98819
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:98906
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:99109)
+    at runNextTicks (node:in
+ternal/process/task_queues:6
+5:5)
+    at listOnTimeout 
+(node:internal/timers:555:9)
+    at 
+process.processTimers (node:
+internal/timers:529:7) {
+  digest: '909935690'
+}
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at I (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94364)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:96670
+    at F._fromJSON (C:\Pyver
+se\zerothon\node_modules\nex
+t\dist\compiled\next-server\
+app-page.runtime.prod.js:12:
+97108)
+    at JSON.parse 
+(<anonymous>)
+    at O (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94085)
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:100584)
+
+Error occurred prerendering 
+page "/ai-chat". Read more: 
+https://nextjs.org/docs/mess
+ages/prerender-error
+
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at I (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94364)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:96670
+    at F._fromJSON (C:\Pyver
+se\zerothon\node_modules\nex
+t\dist\compiled\next-server\
+app-page.runtime.prod.js:12:
+97108)
+    at JSON.parse 
+(<anonymous>)
+    at O (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94085)
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:100584)
+   Generating static pages (11/23) 
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at I (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94364)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:96670
+    at F._fromJSON (C:\Pyver
+se\zerothon\node_modules\nex
+t\dist\compiled\next-server\
+app-page.runtime.prod.js:12:
+97108)
+    at JSON.parse 
+(<anonymous>)
+    at O (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94085)
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:100584) {
+  digest: '100596910'
+}
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at I (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94364)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:96670
+    at F._fromJSON (C:\Pyver
+se\zerothon\node_modules\nex
+t\dist\compiled\next-server\
+app-page.runtime.prod.js:12:
+97108)
+    at JSON.parse 
+(<anonymous>)
+    at O (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94085)
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:100584)
+
+Error occurred prerendering 
+page "/". Read more: https:/
+/nextjs.org/docs/messages/pr
+erender-error
+
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at I (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94364)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:96670
+    at F._fromJSON (C:\Pyver
+se\zerothon\node_modules\nex
+t\dist\compiled\next-server\
+app-page.runtime.prod.js:12:
+97108)
+    at JSON.parse 
+(<anonymous>)
+    at O (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94085)
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:100584)
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at i (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:88296)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:98819
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:98906
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:99109) {
+  digest: '2175576843'
+}
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at I (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94364)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:96670
+    at F._fromJSON (C:\Pyver
+se\zerothon\node_modules\nex
+t\dist\compiled\next-server\
+app-page.runtime.prod.js:12:
+97108)
+    at JSON.parse 
+(<anonymous>)
+    at O (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94085)
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:100584)
+
+Error occurred prerendering 
+page "/playground". Read 
+more: https://nextjs.org/doc
+s/messages/prerender-error
+
+TypeError: Cannot read 
+properties of undefined 
+(reading 'call')
+    at Object.t [as 
+require] (C:\Pyverse\zerotho
+n\.next\server\webpack-runti
+me.js:1:143)
+    at require (C:\Pyverse\z
+erothon\node_modules\next\di
+st\compiled\next-server\app-
+page.runtime.prod.js:16:1883
+9)
+    at I (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94364)
+    at C:\Pyverse\zerothon\n
+ode_modules\next\dist\compil
+ed\next-server\app-page.runt
+ime.prod.js:12:96670
+    at F._fromJSON (C:\Pyver
+se\zerothon\node_modules\nex
+t\dist\compiled\next-server\
+app-page.runtime.prod.js:12:
+97108)
+    at JSON.parse 
+(<anonymous>)
+    at O (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:94085)
+    at t (C:\Pyverse\zerotho
+n\node_modules\next\dist\com
+piled\next-server\app-page.r
+untime.prod.js:12:100584)
+   Generating static pages (17/23) 
+ Γ£ô Generating static pages (23/23)
+
+> Export encountered errors 
+on following paths:
+	/ai-chat/page: /ai-chat
+	/docs/page: /docs
+	/page: /
+	/playground/page: 
+/playground

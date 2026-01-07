@@ -1,0 +1,13 @@
+{
+    "name": "zerothan-python-compiler-api",
+    "version": "1.0.0",
+    "description": "Python to EVM bytecode compiler API using Pyodide",
+    "main": "api/compile.js",
+    "scripts": {
+        "dev": "vercel dev",
+        "deploy": "vercel --prod"
+    },
+    "devDependencies": {
+        "@vercel/node": "^3.0.0"
+    }
+}
