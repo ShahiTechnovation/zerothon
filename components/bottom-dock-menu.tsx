@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Home, Zap, Layout, BookOpen, Code2, MessageSquare } from "lucide-react"
+import { Home, Zap, Layout, BookOpen, Code2, MessageSquare, Sparkles } from "lucide-react"
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
 
 const menuItems = [
@@ -14,6 +14,11 @@ const menuItems = [
     title: "AI Chat",
     icon: MessageSquare,
     href: "/ai-chat",
+  },
+  {
+    title: "Zero Wizard",
+    icon: Sparkles,
+    href: "/wizard",
   },
   {
     title: "Features",
